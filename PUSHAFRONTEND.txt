@@ -1,0 +1,35 @@
+backend ligger uppe på AWS:
+
+ssh -i 
+
+Efter jag ändrat något på backend så måste jag nog köra (på i backend mappen på virtuella datorn):
+sudo node server.js
+npm run start
+
+(virtuella datorn har inte inbyggda re-build när man ändrar kod)?
+
+
+om jag vill använda backenden här så får jag ändra i host.js till localhost:4000
+där kör jag inte node tror jag, kör build ist:
+npm run build
+npm run start 
+
+
+lägga in i backend (på aws)? (och fixa SSL certificate ifrån https://letsencrypt.org/sv/ )
+
+import https from 'https';
+import fs from 'fs';
+import express from 'express';
+
+const app = express();
+
+const options = {
+  key: fs.readFileSync('path/to/private.key'),
+  cert: fs.readFileSync('path/to/certificate.crt')
+};
+
+
+// detta ist för app.listen:
+https.createServer(options, app).listen(443, () => {
+  console.log('Server is running on port 443');
+}); 
