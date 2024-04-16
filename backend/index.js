@@ -5,7 +5,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import mysql from "mysql2/promise";
 import bcrypt from "bcrypt";
-import { nanoid } from "nanoid"; // ta bort!
 
 // TODO: KOM IHÅG ATT STARTA MAMP (mysql servern)
 
@@ -20,16 +19,16 @@ import { nanoid } from "nanoid"; // ta bort!
 // logga in via terminalen (terminalen på datorn, inte vscode kanske lättast)
 // shh -i <din-nyckel>.pem -r ./ ubuntu@<din-ec2-instans>
 
-const app = express();
 const PORT = 4000;
+const app = express();
 
 // connect to DB
 const pool = mysql.createPool({
-  host: "localhost",
+  host: "mysql",
   user: "root",
   password: "root",
   database: "bank",
-  port: 3307,
+  //port: 3307,
   //port: 3307,
   //port: 3307,
   //port: 3307,
@@ -151,8 +150,16 @@ app.post("/users", async (req, res) => {
 });
 
 // just to see users array on localhost:4000/users
-app.get("/users", (req, res) => {
+app.get("/users", async (req, res) => {
   //res.json(users);
+  try {
+    const users = await query("SELECT * FROM users");
+    res.json(users);
+  } catch (error) {
+    // Handle errors appropriately
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // Logga in (POST): "/sessions"

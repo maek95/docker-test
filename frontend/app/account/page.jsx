@@ -150,7 +150,7 @@ export default function AccountPage() {
       <div className="hidden md:block">
         <TopBar stickyOrFixed={"sticky"}></TopBar>
       </div>
-      <div className="pt-8 pb-24 px-6 flex flex-col lg:flex-row gap-8 lg:gap-40">
+      <div className="pt-16 md:pt-8 pb-24 px-6 flex flex-col lg:flex-row gap-8 lg:gap-40">
         <div className="flex flex-col gap-8">
           <h1>Welcome {username}</h1>
           <h2>Your Account information</h2>
