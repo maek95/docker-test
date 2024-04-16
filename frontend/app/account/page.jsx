@@ -21,20 +21,20 @@ export default function AccountPage() {
   }, []);
 
   useEffect(() => {
-    if (transaction != null) {
+    if (transaction !== null) {
       console.log(
         "transaction state after received update from input: ",
         transaction
       );
       //handlePostTransaction();
       postTransaction();
-      postAccount(); // post account information again
+      //postAccount(); // post account information again
     } else {
       console.log("stopped post of NULL/undefined transaction");
     }
 
     //}, [transaction])
-  }, [transaction]);
+  }, []);
 
   async function postAccount() {
     // fetch the saldo  once when entering the page
@@ -133,16 +133,19 @@ export default function AccountPage() {
   } */
 
   function handleClickDeposit(e) {
+    e.preventDefault();
+
     if (input != "") {
       setTransaction(input);
       console.log("sent input: ", input, " to transaction state");
+      postTransaction() // Post the transaction to the backend
+      .then(() => postAccount()); // Refresh account information after posting the transaction
       // setTransactionKey(prevKey => prevKey + 1); // Increment transactionKey to trigger useEffect
       /* postTransaction();
       postAccount(); */
     } else {
       console.log("Can't make an empty deposit");
     }
-    e.preventDefault();
   }
 
   return (
