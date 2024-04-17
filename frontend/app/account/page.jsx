@@ -118,10 +118,11 @@ export default function AccountPage() {
       <div className="hidden md:block">
         <TopBar stickyOrFixed={"sticky"}></TopBar>
       </div>
-      <div className="pt-8 pb-24 px-6 flex flex-col lg:flex-row gap-8 lg:gap-40">
+      <h1 className="pt-8 px-6">Welcome {username}</h1>
+      <div className="pt-8 pb-24 px-6 flex flex-col lg:flex-row gap-8 lg:gap-12 ">
+        
         <div className="flex flex-col gap-8">
-          <h1>Welcome {username}</h1>
-          <h2>Your Account information</h2>
+          <h4 className="font-normal">Your Account Information</h4>
 
           <div>
             <img src="/visacard.png" alt="" />
@@ -132,23 +133,24 @@ export default function AccountPage() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-8">
+        <div className="flex p-4 flex-col gap-8 border-2 border-solid border-[rgb(35,38,90)] rounded-lg md:border-none md:p-0">
           <h4 className="font-normal">
             Total Balance on account id {accountId}:
           </h4>
           <p className="text-4xl font-bold">{saldo} kr</p>
           <div className="bg-[rgb(37,103,249)] h-2 rounded-full w-32"></div>
           <form
-            className="flex flex-col w-[50%] gap-8 items-start justify-center"
+            className="flex flex-col gap-8 items-start justify-center"
             onSubmit={postTransaction}
           >
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-8 w-full">
               <h4 className="font-normal" htmlFor="deposit">
-                Insert Deposit:
+                Make a Deposit:
               </h4>
               {/* webkit stuff removes the up/down arrows that exist by default */}
               <input
-                className="p-2 px-4 text-2xl leading-none rounded-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                autoFocus
+                className="bg-[rgb(35,38,90)] border-none text-white py-2 px-4 text-lg leading-none rounded-full w-full box-border [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 required
                 type="number"
                 name="deposit"
@@ -161,9 +163,10 @@ export default function AccountPage() {
             </div>
             <button
               type="submit"
-              className="flex text-white text-base leading-none w-48 items-center justify-center py-6 bg-[rgb(37,103,249)] border-solid border-[rgb(37,103,249)] hover:bg-[rgb(35,38,90)] rounded-full"
+              className="flex py-2 px-4 items-center justify-center bg-[rgb(37,103,249)] box-border border-solid border-[rgb(37,103,249)] hover:bg-[rgb(35,38,90)] rounded-full w-full"
             >
-              Deposit
+              <p className="text-white text-base leading-none">Send Deposit</p>
+              
             </button>
           </form>
         </div>
