@@ -17,24 +17,24 @@ export default function AccountPage() {
   const [transactionKey, setTransactionKey] = useState(0); // Unique key for transaction // TODO: should maybe handle this in backend?
 
   useEffect(() => {
-    postAccount();
+    postAccount(); // fetch data once when entering account page, includes setSaldo, setUsername, and setAccountId
   }, []);
 
   useEffect(() => {
-    if (transaction !== null) {
+    if (transaction != null) {
       console.log(
         "transaction state after received update from input: ",
         transaction
       );
       //handlePostTransaction();
       postTransaction();
-      //postAccount(); // post account information again
+      postAccount(); // post account information again with updated saldo
     } else {
       console.log("stopped post of NULL/undefined transaction");
     }
 
     //}, [transaction])
-  }, []);
+  }, [transaction]);
 
   async function postAccount() {
     // fetch the saldo  once when entering the page
@@ -123,7 +123,7 @@ export default function AccountPage() {
       const data = await response.json();
       
       //console.log("me/accounts/transaction data: ", data);
-      setInput(""); // clear input field... have to be done here due to async..?
+      //setInput(""); // clear input field... have to be done here due to async..?
     } catch (error) {
       console.error("Error:", error);
     }
@@ -133,19 +133,16 @@ export default function AccountPage() {
   } */
 
   function handleClickDeposit(e) {
-    e.preventDefault();
-
     if (input != "") {
       setTransaction(input);
       console.log("sent input: ", input, " to transaction state");
-      postTransaction() // Post the transaction to the backend
-      .then(() => postAccount()); // Refresh account information after posting the transaction
       // setTransactionKey(prevKey => prevKey + 1); // Increment transactionKey to trigger useEffect
       /* postTransaction();
       postAccount(); */
     } else {
       console.log("Can't make an empty deposit");
     }
+    e.preventDefault();
   }
 
   return (
@@ -153,7 +150,7 @@ export default function AccountPage() {
       <div className="hidden md:block">
         <TopBar stickyOrFixed={"sticky"}></TopBar>
       </div>
-      <div className="pt-16 md:pt-8 pb-24 px-6 flex flex-col lg:flex-row gap-8 lg:gap-40">
+      <div className="pt-8 pb-24 px-6 flex flex-col lg:flex-row gap-8 lg:gap-40">
         <div className="flex flex-col gap-8">
           <h1>Welcome {username}</h1>
           <h2>Your Account information</h2>

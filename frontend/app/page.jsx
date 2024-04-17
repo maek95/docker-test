@@ -41,8 +41,8 @@ export default function Home() {
         </div>
 
         {/* h1 on mobile device */}
-        <div className="flex justify-center md:justify-start md:px-8 md:pt-12 md:hidden">
-          <h1 className="flex md:hidden text-5xl">Chas Bank</h1>
+        <div className="flex justify-center md:hidden">
+          <h1 className="flex text-5xl">Chas Bank</h1>
         </div>
         <div className="flex flex-col gap-8 justify-center md:items-start md:px-8">
           {" "}

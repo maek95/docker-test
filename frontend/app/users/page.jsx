@@ -65,7 +65,7 @@ export default function UsersPage() {
         <TopBar stickyOrFixed={"sticky"}></TopBar>
       </div>
 
-      <div className="pt-16 md:pt-8 px-6 flex flex-col gap-8 pb-24">
+      <div className="pt-8 px-6 flex flex-col gap-8 pb-24">
         <h1>Chas Bank</h1>
 
         <h2>Create your account</h2>
