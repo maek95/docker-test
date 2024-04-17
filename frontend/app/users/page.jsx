@@ -62,7 +62,7 @@ export default function UsersPage() {
   return (
     <main className="min-h-full mb-">
       <div className="hidden md:block">
-        <TopBar stickyOrFixed={"sticky"}></TopBar>
+        <TopBar isLoggedIn={false} stickyOrFixed={"sticky"}></TopBar>
       </div>
 
       <div className="pt-8 px-6 flex flex-col gap-8 pb-24">
@@ -101,7 +101,7 @@ export default function UsersPage() {
         </div>
       </div>
       <div className="block md:hidden">
-        <NavBar stickyOrFixed={"fixed"}></NavBar>
+        <NavBar isLoggedIn={false} stickyOrFixed={"fixed"}></NavBar>
       </div>
     </main>
   );

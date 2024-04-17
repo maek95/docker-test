@@ -34,7 +34,7 @@ export default function Home() {
 
         {/* top navbar and new h1 on devices above 768px */}
         <div className="hidden md:flex flex-col gap-20">
-          <TopBar stickyOrFixed={"sticky"}></TopBar>
+          <TopBar isHomePage={true} isLoggedIn={isLoggedIn} stickyOrFixed={"sticky"}></TopBar>
           <div className="hidden md:flex justify-center md:justify-start px-8">
             <h1 className="text-6xl">Chas Bank</h1>
           </div>
@@ -90,7 +90,7 @@ export default function Home() {
        </div> */}
 
         <div className="md:hidden">
-          <NavBar stickyOrFixed={"fixed"}></NavBar>
+          <NavBar isHomePage={true} isLoggedIn={isLoggedIn} stickyOrFixed={"fixed"}></NavBar>
         </div>
         {/* <NavBar stickyOrFixed={"fixed"}></NavBar> */}
       </div>

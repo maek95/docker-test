@@ -64,7 +64,7 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen bg-taieri bg-repeat-y bg-16 bg-right">
       <div className="hidden md:block">
-        <TopBar stickyOrFixed={"sticky"}></TopBar>
+        <TopBar isLoggedIn={false} stickyOrFixed={"sticky"}></TopBar>
       </div>
       <div className="pt-8 px-6 flex flex-col gap-8 pb-24">
         <h1>Chas Bank</h1>
@@ -111,7 +111,7 @@ export default function LoginPage() {
         {/*       <input type="text" /> */}
       </div>
       <div className="block md:hidden">
-        <NavBar stickyOrFixed={"fixed"}></NavBar>
+        <NavBar isLoggedIn={false} stickyOrFixed={"fixed"}></NavBar>
       </div>
     </main>
   );

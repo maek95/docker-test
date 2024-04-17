@@ -116,7 +116,7 @@ export default function AccountPage() {
   return (
     <main className="min-h-screen">
       <div className="hidden md:block">
-        <TopBar stickyOrFixed={"sticky"}></TopBar>
+        <TopBar isAccountPage={true} isLoggedIn={true} stickyOrFixed={"sticky"}></TopBar>
       </div>
       <h1 className="pt-8 px-6">Welcome {username}</h1>
       <div className="pt-8 pb-24 px-6 flex flex-col lg:flex-row gap-8 lg:gap-12 ">
@@ -177,7 +177,7 @@ export default function AccountPage() {
       </div>
       {/* <NavBar stickyOrFixed={"sticky"}></NavBar> */}
       <div className="block md:hidden">
-        <NavBar stickyOrFixed={"fixed"}></NavBar>
+        <NavBar isAccountPage={true} isLoggedIn={true} stickyOrFixed={"fixed"}></NavBar>
       </div>
     </main>
   );

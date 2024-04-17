@@ -3,25 +3,9 @@ import { FaSuitcase, FaHome } from "react-icons/fa";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-export default function NavBar({stickyOrFixed}) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+export default function NavBar({isAccountPage, isHomePage, isLoggedIn, stickyOrFixed}) {
+  //const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isClickedWhenOffline, setIsClickedWhenOffline] = useState(false);
-
-  //const tokenStorage = localStorage.getItem("token");
-  let tokenStorage;
-
-  useEffect(() => {
-    tokenStorage = localStorage.getItem("token");
-  }, [])
-
-  useEffect(() => {
-    if (tokenStorage != null) {
-      setIsLoggedIn(true);
-    } else {
-      //setIsLoggedIn(false);
-    }
-  }, [tokenStorage]);
-
 
   function handleClickWhenOffline() {
     setIsClickedWhenOffline(true);
@@ -39,18 +23,18 @@ export default function NavBar({stickyOrFixed}) {
       
       <div className="flex">
         <Link className="text-white no-underline" href={"/"}>
-         <NavBox borderL={0}>
-            <FaHome></FaHome>
-            <h3>Home</h3>
+         <NavBox>
+            <FaHome className={`${isHomePage ? "text-[rgb(37,103,249)]" : "text-white"}`}></FaHome>
+            <h3 className={`${isHomePage ? "text-[rgb(37,103,249)]" : "text-white"}`}>Home</h3>
           </NavBox>
         </Link>
       </div>
       <div className="flex">
         {isLoggedIn ? (
           <Link className="text-white no-underline" href={"/account"}>
-            <NavBox borderR={0}>
-              <FaSuitcase></FaSuitcase>
-              <h3>My Economy</h3>
+            <NavBox>
+              <FaSuitcase className={`${isAccountPage ? "text-[rgb(37,103,249)]" : "text-white"}`}></FaSuitcase>
+              <h3 className={`${isAccountPage ? "text-[rgb(37,103,249)]" : "text-white"}`}>My Economy</h3>
             </NavBox>
           </Link>
         ) : ( // no Link if not logged in:
@@ -67,7 +51,7 @@ export default function NavBar({stickyOrFixed}) {
                 <h3 className="text-red-500">Not Logged In</h3>
               </div>
               <FaSuitcase></FaSuitcase>
-              <h3>My Economy</h3>
+              <h3 className={`${isAccountPage ? "text-[rgb(37,103,249)]" : "text-white"}`}>My Economy</h3>
             </NavBox>
        
         )}
