@@ -133,7 +133,7 @@ export default function AccountPage() {
           </div>
         </div>
 
-        <div className="flex p-4 flex-col gap-8 border-2 border-solid border-[rgb(35,38,90)] rounded-lg md:border-none md:p-0">
+        <div className="flex p-4 flex-col gap-8 border-2 border-solid border-[rgb(35,38,90)] rounded-lg md:border-0 md:border-l-2 md:p-0 md:pl-12 md:rounded-none">
           <h4 className="font-normal">
             Total Balance on account id {accountId}:
           </h4>
