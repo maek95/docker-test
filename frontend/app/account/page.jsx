@@ -12,29 +12,12 @@ export default function AccountPage() {
   const [username, setUsername] = useState(null);
   const [accountId, setAccountId] = useState(null);
   const [input, setInput] = useState("");
-  const [transaction, setTransaction] = useState(null);
 
   const [transactionKey, setTransactionKey] = useState(0); // Unique key for transaction // TODO: should maybe handle this in backend?
 
   useEffect(() => {
     postAccount(); // fetch data once when entering account page, includes setSaldo, setUsername, and setAccountId
   }, []);
-
-  useEffect(() => {
-    if (transaction != null) {
-      console.log(
-        "transaction state after received update from input: ",
-        transaction
-      );
-      //handlePostTransaction();
-      postTransaction();
-      postAccount(); // post account information again with updated saldo
-    } else {
-      console.log("stopped post of NULL/undefined transaction");
-    }
-
-    //}, [transaction])
-  }, [transaction]);
 
   async function postAccount() {
     // fetch the saldo  once when entering the page
@@ -45,9 +28,9 @@ export default function AccountPage() {
         "fetched localStorage token for Account data: ",
         tokenStorage
       );
-    
+
       //setToken(tokenStorage);
-      
+
       const response = await fetch(`${host}/me/accounts`, {
         // users sidan på backend! dvs inte riktiga sidan!
         method: "POST",
@@ -92,21 +75,21 @@ export default function AccountPage() {
   } else {
   }
 
-  //function handlePostTransaction() {
-  async function postTransaction() {
+  async function postTransaction(e) {
+    e.preventDefault(); // because we use this function in a form submit
+
+    const transactionInput = input; // could just send input directly I guess
+
     try {
-     
-        const tokenStorage = localStorage.getItem("token");
+      const tokenStorage = localStorage.getItem("token");
 
-        console.log(
-          "fetched localStorage token for Account data: ",
-          tokenStorage
-        );
+      console.log(
+        "fetched localStorage token for Account data: ",
+        tokenStorage
+      );
 
-      
-      //setToken(tokenStorage);
       console.log("fetched localStorage token for Transaction: ", tokenStorage);
-      console.log("posting transaction of ", transaction, "kr");
+      console.log("posting transaction of ", transactionInput, "kr");
       const response = await fetch(`${host}/me/accounts/transactions`, {
         // users sidan på backend! dvs inte riktiga sidan!
         method: "POST",
@@ -115,34 +98,19 @@ export default function AccountPage() {
         },
         body: JSON.stringify({
           token: tokenStorage, // to find the correct account
-          transaction: transaction, // always sent as a string?
+          transaction: transactionInput, // always sent as a string?
         }),
       });
 
-      
-      const data = await response.json();
-      
-      //console.log("me/accounts/transaction data: ", data);
-      //setInput(""); // clear input field... have to be done here due to async..?
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to deposit");
+      }
+
+      postAccount(); // fetch account info after deposit
     } catch (error) {
       console.error("Error:", error);
     }
-  }
-
-  /*  postTransaction(); 
-  } */
-
-  function handleClickDeposit(e) {
-    if (input != "") {
-      setTransaction(input);
-      console.log("sent input: ", input, " to transaction state");
-      // setTransactionKey(prevKey => prevKey + 1); // Increment transactionKey to trigger useEffect
-      /* postTransaction();
-      postAccount(); */
-    } else {
-      console.log("Can't make an empty deposit");
-    }
-    e.preventDefault();
   }
 
   return (
@@ -172,12 +140,13 @@ export default function AccountPage() {
           <div className="bg-[rgb(37,103,249)] h-2 rounded-full w-32"></div>
           <form
             className="flex flex-col w-[50%] gap-8 items-start justify-center"
-            onSubmit={handleClickDeposit}
+            onSubmit={postTransaction}
           >
             <div className="flex flex-col gap-8">
               <h4 className="font-normal" htmlFor="deposit">
                 Insert Deposit:
               </h4>
+              {/* webkit stuff removes the up/down arrows that exist by default */}
               <input
                 className="p-2 px-4 text-2xl leading-none rounded-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 required
