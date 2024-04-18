@@ -108,6 +108,7 @@ export default function AccountPage() {
       }
 
       postAccount(); // fetch account info after deposit
+      setInput(""); // clear input field
     } catch (error) {
       console.error("Error:", error);
     }
@@ -119,7 +120,7 @@ export default function AccountPage() {
         <TopBar isAccountPage={true} isLoggedIn={true} stickyOrFixed={"sticky"}></TopBar>
       </div>
       <h1 className="pt-8 px-6">Welcome {username}</h1>
-      <div className="pt-8 pb-24 px-6 flex flex-col lg:flex-row gap-8 lg:gap-12 ">
+      <div className="pt-8 pb-24 px-6 flex flex-col md:flex-row gap-8 md:gap-12 ">
         
         <div className="flex flex-col gap-8">
           <h4 className="font-normal">Your Account Information</h4>
@@ -128,7 +129,7 @@ export default function AccountPage() {
             <img src="/visacard.png" alt="" />
           </div>
 
-          <div className="hidden lg:flex items-center justify-start">
+          <div className="hidden md:flex items-center justify-start">
             <Socials />
           </div>
         </div>
@@ -141,13 +142,14 @@ export default function AccountPage() {
           <div className="bg-[rgb(37,103,249)] h-2 rounded-full w-32"></div>
           <form
             className="flex flex-col gap-8 items-start justify-center"
-            onSubmit={postTransaction}
+            onSubmit={postTransaction} // also clears input field
           >
             <div className="flex flex-col gap-8 w-full">
               <h4 className="font-normal" htmlFor="deposit">
                 Make a Deposit:
               </h4>
               {/* webkit stuff removes the up/down arrows that exist by default */}
+              {/* type="number" makes it impossible to type letters in the input-field (on mobile you can but you cant submit it!). Thus we dont need anything more to prevent sending wrong input! */}
               <input
                 autoFocus
                 className="bg-[rgb(35,38,90)] border-none text-white py-2 px-4 text-lg leading-none rounded-full w-full box-border [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -171,7 +173,7 @@ export default function AccountPage() {
           </form>
         </div>
 
-        <div className="flex lg:hidden items-center justify-start">
+        <div className="flex md:hidden items-center justify-start">
           <Socials />
         </div>
       </div>
