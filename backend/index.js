@@ -5,6 +5,8 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import mysql from "mysql2/promise";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 
 // TODO: KOM IHÅG ATT STARTA MAMP (mysql servern)
 
@@ -13,7 +15,7 @@ import bcrypt from "bcrypt";
 // MED GITBASH!!!!!!!:
 // nodemon api/index.js
 
-// sen när vi ska ladda upp hela projektet på AWS Amazon:
+// (INTE LÄNGRE, nu pushar vi till github bara med deploy.yml) skicka hela projektet till EC2 AWS Amazon:
 // scp -i <din-nyckel>.pem -r ./ ubuntu@<din-ec2-instans>:/home/ubuntu/bank
 
 // logga in via terminalen (terminalen på datorn, inte vscode kanske lättast)
@@ -25,12 +27,11 @@ const app = express();
 // connect to DB
 const pool = mysql.createPool({
   host: "mysql",
+  //host: "localhost",  // host: "localhost" here if using MAMP locally, also change to host = "http://localhost:4000" in frontend host.js file! Also remember to start MAMP..
   user: "root",
   password: "root",
   database: "bank",
-  //port: 3307,
-  //port: 3307,
-  //port: 3307,
+  //database: "bank-app", // ALSO CHANGE TO THIS ONE IF USING MAMP LOCALLY
   //port: 3307,
   //port: 8889,
 });
@@ -47,9 +48,27 @@ async function query(sql, params) {
 // sudo node server.js
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors({
+ // origin: "http://localhost:3000", // when working locally
+  origin: "http://16.171.111.156:3000",
+  credentials: true, // allows cookies or something
+}));
 
+/* app.use(
+  cors({
+    origin: "*", // Allow requests from any origin, NOT ALLOWED
+    credentials: true,
+  })
+); */
+
+app.use(bodyParser.json());
+app.use(express.json()); // not needed?
+app.use(cookieParser());
+
+//const serverPassword = process.env.serverPassword; // TODO: fix environment variable...
+const serverPassword = "askdasdk12312"
+
+// TODO: ta bort generateOTP?
 // Generera engångslösenord (token)
 function generateOTP() {
   //one time password
@@ -80,8 +99,6 @@ app.get("/", (req, res) => {
 app.post("/users", async (req, res) => {
   try {
     const { username, password } = req.body;
-
-    // SINCE WE HAVE MANY ERROR-responses we have a RETURN-STATEMENT for every response so the code is exited if an error occurs! At the end when everything is complete (after creating empty account) we return the last response with all data!
 
     if (!username || !password) {
       return res
@@ -177,6 +194,7 @@ app.post("/sessions", async (req, res) => {
         .json({ error: "Username and Password are required." });
     }
 
+    // before mySQL:
     /*  const loggedInUser = users.find((user) => {
       return data.username === user.username && data.password === user.password;
     }); */
@@ -196,26 +214,37 @@ app.post("/sessions", async (req, res) => {
 
     if (!passwordMatch) {
       return res.status(401).send("invalid username or password");
-    } else {
-      const generatedOTP = generateOTP(); // token används på frontend och sparas i localStorage så den inte försvinner när de byter till account-sidan efter inloggning.
+    }
 
-      try {
-        const sessionCreationResult = await query(
-          "INSERT INTO sessions (user_id, token) VALUES (?, ?)",
-          [loggedInUser.id, generatedOTP]
-        );
+    //const generatedOTP = generateOTP(); // token används på frontend och sparas i localStorage så den inte försvinner när de byter till account-sidan efter inloggning.
 
-        // TODO: borde vi hämta (SELECT) token ifrån skapade session, eller kan vi skicka generatedOTP direkt som jag gjort nedanför?
+    const token = jwt.sign({ id: loggedInUser.id }, serverPassword);
 
-        return res.status(201).json({
-          message: `Session created for ${loggedInUser.username}`,
-          data: { sessionCreationResult }, // onödigt?
-          token: generatedOTP, // token hämtas i frontend
-        });
-      } catch (error) {
-        console.error("3:Error creating session", error);
-        return res.status(500).send("3:Error creating session");
-      }
+    res.cookie("token", token, { httpOnly: true, sameSite: "strict" });
+    //res.cookie("token", token, { httpOnly: true, sameSite: "none", secure: true });
+    //res.cookie("token", token);
+
+
+
+    try {
+      /* const sessionCreationResult = await query(
+        "INSERT INTO sessions (user_id, token) VALUES (?, ?)",
+        [loggedInUser.id, generatedOTP]
+      ); */
+
+      const sessionCreationResult = await query(
+        "INSERT INTO sessions (user_id, token) VALUES (?, ?)",
+        [loggedInUser.id, "dummy_token_value"]
+      );
+
+      return res.status(201).json({
+        message: `Session created for ${loggedInUser.username}`,
+        data: { sessionCreationResult }, // onödigt?
+        //token: generatedOTP, // token hämtas i frontend
+      });
+    } catch (error) {
+      console.error("3:Error creating session", error);
+      return res.status(500).send("3:Error creating session");
     }
   } catch (error) {
     console.error("1:Error finding user:", error);
@@ -224,7 +253,7 @@ app.post("/sessions", async (req, res) => {
 });
 
 app.get("/sessions", (req, res) => {
- // res.json(sessions);
+  // res.json(sessions);
 });
 
 // Visa salodo (POST): "/me/accounts"
@@ -232,18 +261,43 @@ app.get("/sessions", (req, res) => {
 // [{id: 1, userId: 101, amount: 200 }, ...]
 // /me eftersom man måste vara inloggad för att få tillgång till detta!
 app.post("/me/accounts", async (req, res) => {
-  try {
-    const { token } = req.body; // token from current session
+  //console.log("Request body:", req.body); // Log the request body
 
-    if (!token) {
+  try {
+    //const { token } = req.body; // token from current session
+
+    /* if (!token) {
       return res.status(400).json({ error: "Token not found." });
-    }
+    } */
 
     /* const currentSession = sessions.find((session) => {
     return data.token === session.token;
   }); */
+    const tokenFromCookie = req.cookies.token;
+   //console.log("Request body TOKEN:", tokenFromCookie); // Log the request body token
 
-    let sessionSearchResult;
+    // 
+    /* jwt.verify(tokenFromCookie, serverPassword, (err, data) => {
+
+      if (!err) {
+        console.log("data", data); // id 156
+      } else {
+        console.log("error at jwt verification: ", err);
+      }
+    }) */
+
+    // same as above but I store the token
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(tokenFromCookie, serverPassword);
+    } catch (error) {
+      console.error("Error verifying JWT token:", error);
+      return res.status(401).send("Invalid token");
+    }
+    const userId = decodedToken.id;
+
+    // token from localStorage:
+    /*  let sessionSearchResult;
     try {
       // use the token to find the current session (user_id that is logged in)
       sessionSearchResult = await query(
@@ -254,31 +308,33 @@ app.post("/me/accounts", async (req, res) => {
       console.error("2:Error finding session", error);
       return res.status(500).send("2:Error finding session");
     }
-    const currentSession = sessionSearchResult[0];
+    const currentSession = sessionSearchResult[0]; */
 
+    // before using mySQL:
     /* userAccount = accounts.find((account) => {
     return account.userId === currentSession.userId;
   }); */
+
     let userAccountSearchResult;
     try {
       // fetch the user's account by giving the user_id
       userAccountSearchResult = await query(
         "SELECT * FROM accounts WHERE user_id = ?",
-        [currentSession.user_id]
+        [userId]
+
+        // [currentSession.user_id]
       );
     } catch (error) {
       console.error("4:Error finding user's account", error);
       return res.status(500).send("4:Error finding user's account");
     }
     const loggedInUserAccount = userAccountSearchResult[0];
-    /*  currentUser = users.find((user) => {
-    return user.userId === currentSession.userId;
-  }); */
+    
     let userSearchResult;
     try {
-      // fetch the current session (stored in frontend localStorage)
+      
       userSearchResult = await query("SELECT * FROM users WHERE id = ?", [
-        currentSession.user_id,
+        userId, //currentSession.user_id
       ]);
     } catch (error) {
       console.error("4:Error finding logged in user", error);
@@ -286,6 +342,7 @@ app.post("/me/accounts", async (req, res) => {
     }
     const loggedInUser = userSearchResult[0];
 
+    // before mySQL:
     /* res
     .status(200)
     .json({
@@ -313,19 +370,28 @@ app.get("/me/accounts", (req, res) => {
 // Sätt in pengar (POST): "/me/accounts/transactions"
 app.post("/me/accounts/transactions", async (req, res) => {
   try {
-    const { transaction, token } = req.body; // pengar som ska sättas in?
+    //const { transaction, token } = req.body; // pengar som ska sättas in?
+    const { transaction } = req.body; // pengar som ska sättas in?
 
-    if (!transaction || !token) {
-      return res.status(400).json({ error: "Transaction or Token not found." });
+    //if (!transaction || !token) {
+      if (!transaction ) {
+        return res.status(400).json({ error: "Transaction not found." });
+      }
+      console.log("Transaction received:", transaction);
+
+    const tokenFromCookie = req.cookies.token;
+
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(tokenFromCookie, serverPassword);
+    } catch (error) {
+      console.error("Error verifying JWT token:", error);
+      return res.status(401).send("Invalid token");
     }
-    console.log("Transaction received:", transaction);
+    const userId = decodedToken.id;
 
-    /* const currentSession = sessions.find((session) => {
-    // find the token's session to later find the matching id
-    return data.token === session.token;
-  }); */
-
-    let sessionSearchResult;
+    // token in localStorage:
+    /* let sessionSearchResult;
     try {
       // use token to retrieve the session information (i.e. the user_id)
       sessionSearchResult = await query(
@@ -336,8 +402,9 @@ app.post("/me/accounts/transactions", async (req, res) => {
       console.error("2:Error finding session", error);
       return res.status(500).send("2:Error finding session");
     }
-    const currentSession = sessionSearchResult[0];
+    const currentSession = sessionSearchResult[0]; */
 
+    // before using mySQL:
     /* userAccount = accounts.find((account) => {
       return account.userId === currentSession.userId;
     }); */
@@ -347,7 +414,8 @@ app.post("/me/accounts/transactions", async (req, res) => {
       // fetch the user's account by giving the user_id
       userAccountSearchResult = await query(
         "SELECT * FROM accounts WHERE user_id = ?",
-        [currentSession.user_id]
+        [userId]
+       // [currentSession.user_id]
       );
     } catch (error) {
       console.error("3:Error finding user's account", error);
@@ -365,7 +433,7 @@ app.post("/me/accounts/transactions", async (req, res) => {
       updatedSaldo
     );
 
-   /*  userAccount.amount = updatedSaldo; */
+    /*  userAccount.amount = updatedSaldo; */
     try {
       const updateAccountResult = await query(
         "UPDATE accounts SET amount = ? WHERE id = ?",
@@ -374,16 +442,16 @@ app.post("/me/accounts/transactions", async (req, res) => {
       console.log("updatedAccountAmount: ", updateAccountResult);
       //res.status(204).send("Account amount updated");
 
-      return res.status(200).json({ // last thing we return, exiting here
+      return res.status(200).json({
+        // last thing we return, exiting here
         message: "Transaction has been received: ",
         transaction: transaction,
         message2: "Account's amount got updated to: ",
-        updatedSaldo: updatedSaldo
+        updatedSaldo: updatedSaldo,
       });
     } catch (e) {
       return res.status(500).send("Error updating account amount");
     }
-
   } catch (error) {
     console.error("1:Error finding session for transaction:", error);
     res.status(500).json({ error: "1:Internal server error at transaction" });

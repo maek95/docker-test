@@ -13,7 +13,7 @@ export default function AccountPage() {
   const [accountId, setAccountId] = useState(null);
   const [input, setInput] = useState("");
 
-  const [transactionKey, setTransactionKey] = useState(0); // Unique key for transaction // TODO: should maybe handle this in backend?
+  const [transactionKey, setTransactionKey] = useState(0); // Unique key for transaction // TODO: should maybe handle this in backend? DELETE?
 
   useEffect(() => {
     postAccount(); // fetch data once when entering account page, includes setSaldo, setUsername, and setAccountId
@@ -22,12 +22,12 @@ export default function AccountPage() {
   async function postAccount() {
     // fetch the saldo  once when entering the page
     try {
-      const tokenStorage = localStorage.getItem("token");
+      //const tokenStorage = localStorage.getItem("token");
 
-      console.log(
+      /* console.log(
         "fetched localStorage token for Account data: ",
         tokenStorage
-      );
+      ); */
 
       //setToken(tokenStorage);
 
@@ -37,23 +37,30 @@ export default function AccountPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          token: tokenStorage, // "backend får in detta som en "request" i "body"... se server.js när vi skriver t.ex. const data = req.body "
-        }),
+        credentials: "include", // Include cookies in the request
+        // token sent automatically with cookies
+        /* body: JSON.stringify({
+          //token: tokenStorage, // "backend får in detta som en "request" i "body"... se server.js när vi skriver t.ex. const data = req.body "
+        }), */
       });
 
-      const data = await response.json();
-      console.log(
+      if (response.ok) {
+        const data = await response.json();
+        console.log(
         "fetched data.amount: ",
         data.amount,
         " from accountID: ",
         data.accountId,
         " from username:",
         data.username
-      );
-      setSaldo(data.amount);
-      setAccountId(data.accountId);
-      setUsername(data.username);
+        );
+        setSaldo(data.amount);
+        setAccountId(data.accountId);
+        setUsername(data.username);
+      } else {
+        console.log("Error in response from accounts");
+      }
+      
     } catch (error) {
       console.error("Error:", error);
     }
@@ -81,14 +88,14 @@ export default function AccountPage() {
     const transactionInput = input; // could just send input directly I guess
 
     try {
-      const tokenStorage = localStorage.getItem("token");
+      //const tokenStorage = localStorage.getItem("token");
 
-      console.log(
+      /* console.log(
         "fetched localStorage token for Account data: ",
         tokenStorage
-      );
+      ); */
 
-      console.log("fetched localStorage token for Transaction: ", tokenStorage);
+     // console.log("fetched localStorage token for Transaction: ", tokenStorage);
       console.log("posting transaction of ", transactionInput, "kr");
       const response = await fetch(`${host}/me/accounts/transactions`, {
         // users sidan på backend! dvs inte riktiga sidan!
@@ -96,8 +103,9 @@ export default function AccountPage() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
-          token: tokenStorage, // to find the correct account
+          //token: tokenStorage, // to find the correct account
           transaction: transactionInput, // always sent as a string?
         }),
       });

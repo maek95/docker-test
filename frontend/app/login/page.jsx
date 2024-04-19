@@ -25,6 +25,7 @@ export default function LoginPage() {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             username: username, // "backend får in detta som en "request" i "body"... se server.js när vi skriver t.ex. const data = req.body "
             password: password,
@@ -33,13 +34,14 @@ export default function LoginPage() {
 
         const data = await response.json();
         
-        if (data.token) {
+       /*  if (data.token) {
         localStorage.setItem("token", data.token);
         console.log(localStorage);
-        router.push("/account");
-
+        router.push("/account"); */
+        if (response.ok) {
+          router.push("/account"); 
         } else {
-          console.log("token could not be fetched to login-page");
+          console.log("wrong username/pass and/or token could not be fetched to login-page");
           setisFailedLogin(true);
         }
       
