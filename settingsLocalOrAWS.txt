@@ -1,0 +1,13 @@
+backend:
+
+  start MAMP if working locally, with mySQL Port 3306
+
+  index.js
+    - mysql pool
+      * host
+      * database
+    - middleware, check 'origin' in app.use(cors({}))
+
+frontend:
+
+  host.js

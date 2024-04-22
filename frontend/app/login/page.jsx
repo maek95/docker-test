@@ -25,7 +25,7 @@ export default function LoginPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include",
+          credentials: "include", // send cache
           body: JSON.stringify({
             username: username, // "backend får in detta som en "request" i "body"... se server.js när vi skriver t.ex. const data = req.body "
             password: password,
@@ -39,6 +39,8 @@ export default function LoginPage() {
         console.log(localStorage);
         router.push("/account"); */
         if (response.ok) {
+          localStorage.setItem("loggedIn", true); // so client-side remembers between pages that the user is online! e.g. when switching between home and account page
+          console.log(localStorage);
           router.push("/account"); 
         } else {
           console.log("wrong username/pass and/or token could not be fetched to login-page");

@@ -14,17 +14,35 @@ export default function Home() {
 
   let tokenStorage;
 
-  useEffect(() => {
+  /* useEffect(() => {
     tokenStorage = localStorage.getItem("token");
-  }, [])
-
-  useEffect(() => {
+  }, [])  
+    useEffect(() => {
     if (tokenStorage != null) {
       setIsLoggedIn(true);
     } else {
       //setIsLoggedIn(false);
     }
   }, []);
+ */
+
+  // even though we arent storing token in localStorage anymore we still want the client-side to remember if we are online or not!
+  useEffect(() => {
+    tokenStorage = localStorage.getItem("loggedIn");
+    //console.log("tokenStorage: ", tokenStorage);
+  }, [])
+
+  useEffect(() => {
+    if (tokenStorage == "true" ) {
+      setIsLoggedIn(true);
+    } else if (tokenStorage == "false") {
+      setIsLoggedIn(false)
+    } else {
+      console.log("Failed to read 'loggedIn' status from localStorage");
+    }
+  }, [])
+  //console.log("(after useEffect) isLoggedIn: ", isLoggedIn);
+
 
   return (
     <main
@@ -52,9 +70,10 @@ export default function Home() {
            
             <div className="">
               {isLoggedIn ? (
-                <Button
+                <Button 
                   onClick={() => {
-                    localStorage.clear("token");
+                    //localStorage.clear("token");
+                    localStorage.clear("loggedIn");
                     setIsLoggedIn(false);
                   }}
                 >

@@ -49,7 +49,7 @@ async function query(sql, params) {
 
 // Middleware
 app.use(cors({
- // origin: "http://localhost:3000", // when working locally
+  //origin: "http://localhost:3000", // when working locally
   origin: "http://16.171.111.156:3000",
   credentials: true, // allows cookies or something
 }));

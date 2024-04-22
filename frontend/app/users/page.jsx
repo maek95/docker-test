@@ -15,25 +15,6 @@ export default function UsersPage() {
   const [password, setPassword] = useState("");
   const [isUserCreated, setIsUserCreated] = useState(false);
 
-  /* useEffect(() => {
-    fetch('http://localhost:4000/users', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        username: 'Användarnamn',
-       // password: 'Lösenord',
-    }),
-    })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-
-  }, []) */
-
   const handlePostUser = () => {
     fetch(`${host}/users`, {
       // users sidan på backend! dvs inte riktiga sidan!
@@ -70,20 +51,20 @@ export default function UsersPage() {
 
         <h2>Create your account</h2>
         {isUserCreated ? (
-          <div className="flex flex-col">
-            <div className="flex">
+          <div className="flex flex-col gap-4">
               
                 {" "}
-                <p className="text-green-500">Your account has been created</p><p>. Welcome <strong>{username}</strong>!</p>
+                <p className="text-green-500">Your account has been created.</p>
+                <p>Welcome <strong>{username}</strong>!</p>
+                <p>
+                  Please proceed to the{" "}
+                  <Link className="text-white" href={"/login"}>
+                    Log In screen
+                  </Link>
+                  .
+                </p>
       
-            </div>
-            <p>
-              Please proceed to the{" "}
-              <Link className="text-white" href={"/login"}>
-                Log In screen
-              </Link>
-              .
-            </p>
+            
           </div>
         ) : (
           <Form

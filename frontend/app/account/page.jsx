@@ -159,7 +159,7 @@ export default function AccountPage() {
               {/* webkit stuff removes the up/down arrows that exist by default */}
               {/* type="number" makes it impossible to type letters in the input-field (on mobile you can but you cant submit it!). Thus we dont need anything more to prevent sending wrong input! */}
               <input
-                autoFocus
+                //autoFocus // weird on mobile, centers input-field on screen
                 className="bg-[rgb(35,38,90)] border-none text-white py-2 px-4 text-lg leading-none rounded-full w-full box-border [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 required
                 type="number"
