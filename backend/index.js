@@ -105,26 +105,29 @@ app.post("/users", async (req, res) => {
         .status(400)
         .json({ error: "Username and Password are required." });
     }
+    console.log("username submitted in /users: ", username);
 
     // first check if username already exists
-    let userSearch;
     try {
-      // fetch the created user
-      userSearch = await query("SELECT * FROM users WHERE username = ?", [
+        // fetch the created user
+      const userSearch = await query("SELECT * FROM users WHERE username = ?", [
         username,
       ]);
+      console.log("userSearch: ", userSearch);
+      if (userSearch && userSearch[0].username === username ) { // dont have to check if upper/lowercase
+        return res
+          .status(409)
+          .json({ error: "Username already exists. Account was NOT created." });
+      } else {
+        console.log("Username check is successful, username is unique, starting to create account.");
+      }
     } catch (error) {
-      console.error("3:Error finding user", error);
-      return res.status(500).send("3:Error finding user");
+      console.error("Failed searching for username in database: ", error);
+      return res
+      .status(400)
+      .json({ error: "Failed searching for username when checking if unique" }); 
     }
 
-    if (userSearch && userSearch[0].username === username ) { // dont have to check if upper/lowercase
-      return res
-        .status(409)
-        .json({ error: "Username already exists. Account was NOT created." });
-    } else {
-      console.log("Username check is successful, username is unique, starting to create account.");
-    }
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
