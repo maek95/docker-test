@@ -34,6 +34,7 @@ export default function UsersPage() {
         if (!data.error) {
           setIsUserCreated(true);
         } else {
+          setIsFailedUserCreation(true); 
           console.log("Did not update userCreated to true due to some error.");
         }
       })
