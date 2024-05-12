@@ -31,12 +31,15 @@ export default function UsersPage() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data)
-        setIsUserCreated(true);
+        if (!data.error) {
+          setIsUserCreated(true);
+        } else {
+          console.log("Did not update userCreated to true due to some error.");
+        }
       })
       .catch((error) => {
         console.error("Error:", error);
         setIsFailedUserCreation(true); 
-
       });
   };
 
