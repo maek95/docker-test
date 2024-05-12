@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import Button from "./Button";
 
-export default function Form({buttonTitle, onSubmit, username, setUsername, password, setPassword, isFailedLogin}) {
+export default function Form({buttonTitle, onSubmit, username, setUsername, password, setPassword, isFailedLogin, isFailedUserCreation}) {
 
   const inputPassRef = useRef(null);
   const [inputPassType, setInputPassType] = useState("password");
@@ -17,7 +17,9 @@ export default function Form({buttonTitle, onSubmit, username, setUsername, pass
   return (
     <div className="flex flex-col items-start">
       <form className="flex flex-col gap-4" onSubmit={onSubmit}>
-        <label className="flex gap-1" htmlFor="username"><p>Username:</p> {isFailedLogin ? <p className="text-red-500">Incorrect Username or Password</p> : (<p></p>)}</label>
+        <label className="flex gap-1" htmlFor="username"><p>Username:</p> {isFailedLogin ? <p className="text-red-500">Incorrect Username or Password</p> : (<p></p>)}
+        {isFailedUserCreation ? <p className="text-red-500">Username already exists</p> : (<p></p>)}
+        </label>
         <input className="p-2 text-2xl leading-none w-64  md:w-72 lg:w-80" id="username" type="text" value={username} onChange={(e) => {
           setUsername(e.target.value);
         }} required/>

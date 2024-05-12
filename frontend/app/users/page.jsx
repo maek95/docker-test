@@ -14,6 +14,7 @@ export default function UsersPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isUserCreated, setIsUserCreated] = useState(false);
+  const [isFailedUserCreation, setIsFailedUserCreation] = useState(false);
 
   const handlePostUser = () => {
     fetch(`${host}/users`, {
@@ -28,16 +29,21 @@ export default function UsersPage() {
       }),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
+      .then((data) => {
+        console.log(data)
+        setIsUserCreated(true);
+      })
       .catch((error) => {
         console.error("Error:", error);
+        setIsFailedUserCreation(true); 
+
       });
   };
 
   function handleSubmit(e) {
     e.preventDefault(); // Prevent default form submission
     handlePostUser(); // Call the handlePostUser function
-    setIsUserCreated(true);
+    
   }
 
   return (
@@ -68,6 +74,7 @@ export default function UsersPage() {
           </div>
         ) : (
           <Form
+            isFailedUserCreation={isFailedUserCreation}
             buttonTitle={"Create"}
             onSubmit={handleSubmit}
             password={password}
