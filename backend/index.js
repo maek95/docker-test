@@ -123,9 +123,9 @@ app.post("/users", async (req, res) => {
       }
     } catch (error) {
       console.error("Failed searching for username in database: ", error);
-      return res
+      /* return res
       .status(400)
-      .json({ error: "Failed searching for username when checking if unique" }); 
+      .json({ error: "Failed searching for username when checking if unique" });  */
     }
 
 
