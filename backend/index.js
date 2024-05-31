@@ -50,7 +50,7 @@ async function query(sql, params) {
 // Middleware
 app.use(cors({
   //origin: "http://localhost:3000", // when working locally
-  origin: "http://16.171.111.156:3000",
+  origin: "http://13.53.190.247:3000",
   credentials: true, // allows cookies or something
 }));
 
@@ -122,6 +122,7 @@ app.post("/users", async (req, res) => {
         console.log("Username check is successful, username is unique, starting to create account.");
       }
     } catch (error) {
+      //TODO: now it becomes an "error" every time the username is unique, not optimal but works...
       console.error("Failed searching for username in database: ", error);
       /* return res
       .status(400)

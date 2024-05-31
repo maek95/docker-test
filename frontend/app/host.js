@@ -6,5 +6,5 @@
 //export const host = "http://16.171.111.156";
 
 //export const host = "http://localhost:4000"; // when working locally
-export const host = "http://16.171.111.156:4000"
+export const host = "http://13.53.190.247:4000"
 
