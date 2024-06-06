@@ -10,8 +10,8 @@ import { host } from "../host";
 import NavBar from "@/components/NavBar";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("test");
+  const [password, setPassword] = useState("123");
   const router = useRouter();
   const [isFailedLogin, setisFailedLogin] = useState(false);
 
