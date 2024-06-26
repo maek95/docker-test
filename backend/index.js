@@ -3,10 +3,13 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import dotenv from "dotenv";
 import mysql from "mysql2/promise";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
+
+dotenv.config();
 
 // TODO: KOM IHÅG ATT STARTA MAMP (mysql servern)
 
@@ -26,10 +29,12 @@ const app = express();
 
 // connect to DB
 const pool = mysql.createPool({
-  host: "mysql",
+ // host: "mysql",
+  host: process.env.DB_HOST,
   //host: "localhost",  // host: "localhost" here if using MAMP locally, also change to host = "http://localhost:4000" in frontend host.js file! Also remember to start MAMP..
   user: "root",
-  password: "root",
+  //password: "root",
+  password: process.env.DB_PASSWORD,
   database: "bank",
   //database: "bank-app", // ALSO CHANGE TO THIS ONE IF USING MAMP LOCALLY
   //port: 3307,
@@ -50,7 +55,8 @@ async function query(sql, params) {
 // Middleware
 app.use(cors({
   //origin: "http://localhost:3000", // when working locally
-  origin: "http://13.53.190.247:3000",
+ // origin: "http://13.53.190.247:3000",
+  origin: process.env.FRONTEND_HOST,
   credentials: true, // allows cookies or something
 }));
 
@@ -66,7 +72,7 @@ app.use(express.json()); // not needed?
 app.use(cookieParser());
 
 //const serverPassword = process.env.serverPassword; // TODO: fix environment variable...
-const serverPassword = "askdasdk12312"
+const serverPassword = "askdasdk12312" // to access jwt token
 
 // TODO: ta bort generateOTP?
 // Generera engångslösenord (token)
